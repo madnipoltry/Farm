@@ -1,6 +1,7 @@
 <!DOCTYPE html>
 <html lang="ur" dir="rtl"><head><meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<link rel="manifest" href="manifest.json"><meta name="theme-color" content="#a9461f"><link rel="icon" href="icon-192.png"><link rel="apple-touch-icon" href="icon-192.png">
 <title>مدنی پولٹری فارم · Madni Poultry Farm</title>
 <style>body{margin:0;padding:48px 16px;background:#f5ecdc;color:#3b2a22;font-family:Tahoma,system-ui,sans-serif;text-align:center}</style>
 </head><body>
@@ -40,11 +41,12 @@ function editE(id){
 </script>
 
 <script>
+if('serviceWorker' in navigator)navigator.serviceWorker.register('sw.js').catch(function(){});
 fetch('madni-poultry-farm.html',{cache:'no-cache'})
  .then(function(r){if(!r.ok)throw new Error('http '+r.status);return r.text()})
  .then(function(h){
   var css=document.getElementById('theme').textContent,js=document.getElementById('patch').textContent;
-  h=h.replace('</head>','<style>'+css+'</style></head>').replace('</body>','<script>'+js+'<\/script></body>');
+  h=h.replace(/<header><svg[\s\S]*?<\/svg>/,'<header><img src="icon-192.png" width="44" height="44" alt="" style="border-radius:11px">').replace('</head>','<link rel="manifest" href="manifest.json"><meta name="theme-color" content="#a9461f"><link rel="icon" href="icon-192.png"><link rel="apple-touch-icon" href="icon-192.png"><style>'+css+'</style></head>').replace('</body>','<script>'+js+'<\/script></body>');
   document.open();document.write(h);document.close();
  })
  .catch(function(e){document.getElementById('msg').textContent='لوڈ نہیں ہو سکا / Could not load: '+e.message});
