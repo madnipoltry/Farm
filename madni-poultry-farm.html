@@ -160,7 +160,7 @@ function home(){
  <div class="card"><div class="k">${t('آج اموات','Deaths today')}</div><div class="v" style="color:var(--red)">${sum('dead',d)}</div></div>
  <div class="card"><div class="k">${t('آج آمدنی','Income today')}</div><div class="v">${Rs(inc(d))}</div></div>
  <div class="card"><div class="k">${t('آج منافع','Profit today')}</div><div class="v" style="color:${inc(d)-cost(d)<0?'var(--red)':'var(--pri)'}">${Rs(inc(d)-cost(d))}</div></div></div>
- <h2>${t('نئی انٹری','New entry')}</h2><div class="grid">${['egg_in','egg_out','feed_in','feed_out','dead','hens_add','_tot','expense'].map(k=>k=='_tot'?`<div class="card" style="margin:0;text-align:center;padding:6px"><div class="k">${t('کل مرغیاں','Total hens')}</div><div class="v" style="font-size:20px">${h}</div></div>`:b(k)).join('')}</div>
+ <h2>${t('نئی انٹری','New entry')}</h2><div class="grid">${['egg_in','egg_out','feed_in','feed_out','dead','hens_add','hens_out','expense'].map(b).join('')}</div>
  <p class="mut">${t('1 پیٹی = 12 ٹرے = 360 انڈے۔ پہلی بار: موجودہ مرغیاں، انڈے اور خوراک ایک بار "آئیں / جمع / خریدی" میں ڈال دیں۔','1 crate = 12 trays = 360 eggs. First time: enter your current hens, eggs and feed once under "added / collected / bought".')}</p>`;
 }
 function eggCalc(){const n=(+$('pt').value||0)*PETI+(+$('tr').value||0)*TRAY+(+$('lo').value||0);$('tot').innerHTML=t('کل انڈے','Total eggs')+': '+n+'<br><span style="font-weight:400">'+ef(n)+($('pp')&&+$('pp').value?' · '+t('کل رقم','Amount')+' '+Rs(n*(+$('pp').value)/PETI):'')+'</span>';return n}
