@@ -33,7 +33,8 @@ function editE(id){
   $('lo').value=(e.n%TRAY)||'';
   eggCalc();
  }else if($('n'))$('n').value=e.n;
- ['p','pd','c','t','buyer'].forEach(function(i){if($(i)&&e[i]!=null)$(i).value=e[i]});
+ ['pd','c','t','buyer'].forEach(function(i){if($(i)&&e[i]!=null)$(i).value=e[i]});
+ if($('pp')){$('pp').value=e.pp!=null?e.pp:(e.p!=null?Math.round(e.p*PETI*100)/100:'');eggCalc()}
  if($('d'))$('d').value=e.d;
  if($('sh'))$('sh').value=e.shed||'';
  EDITING=id;

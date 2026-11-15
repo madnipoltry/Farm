@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="ur" dir="rtl"><head><meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<title>مدنی پولٹری فارم · Madni Poultry Farm</title>
+<title>Madni Poultry Farm</title>
 <style>
 :root{box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px);--bg:#f7f4ea;--card:#fff;--tx:#23301f;--mut:#6f7a66;--pri:#2e7d32;--pri2:#e3f1e0;--amb:#d98a0b;--amb2:#fcefd2;--red:#b91c1c;--red2:#fde4e4;--bd:#e4e0cf}
 @media (prefers-color-scheme:dark){:root:not([data-theme="light"]){color-scheme:dark;--bg:#141a12;--card:#1e271b;--tx:#ecf2e8;--mut:#9aa690;--pri:#66bb6a;--pri2:#223a22;--amb:#f2b04a;--amb2:#3a2c10;--red:#f87171;--red2:#3d1c1c;--bd:#2e3a2a}}
@@ -160,10 +160,10 @@ function home(){
  <div class="card"><div class="k">${t('آج اموات','Deaths today')}</div><div class="v" style="color:var(--red)">${sum('dead',d)}</div></div>
  <div class="card"><div class="k">${t('آج آمدنی','Income today')}</div><div class="v">${Rs(inc(d))}</div></div>
  <div class="card"><div class="k">${t('آج منافع','Profit today')}</div><div class="v" style="color:${inc(d)-cost(d)<0?'var(--red)':'var(--pri)'}">${Rs(inc(d)-cost(d))}</div></div></div>
- <h2>${t('نئی انٹری','New entry')}</h2><div class="grid">${['egg_in','egg_out','feed_in','feed_out','dead','hens_add','hens_out','expense'].map(b).join('')}</div>
+ <h2>${t('نئی انٹری','New entry')}</h2><div class="grid">${['egg_in','egg_out','feed_in','feed_out','dead','hens_add','_tot','expense'].map(k=>k=='_tot'?`<div class="card" style="margin:0;text-align:center;padding:6px"><div class="k">${t('کل مرغیاں','Total hens')}</div><div class="v" style="font-size:20px">${h}</div></div>`:b(k)).join('')}</div>
  <p class="mut">${t('1 پیٹی = 12 ٹرے = 360 انڈے۔ پہلی بار: موجودہ مرغیاں، انڈے اور خوراک ایک بار "آئیں / جمع / خریدی" میں ڈال دیں۔','1 crate = 12 trays = 360 eggs. First time: enter your current hens, eggs and feed once under "added / collected / bought".')}</p>`;
 }
-function eggCalc(){const n=(+$('pt').value||0)*PETI+(+$('tr').value||0)*TRAY+(+$('lo').value||0);$('tot').innerHTML=t('کل انڈے','Total eggs')+': '+n+'<br><span style="font-weight:400">'+ef(n)+'</span>';return n}
+function eggCalc(){const n=(+$('pt').value||0)*PETI+(+$('tr').value||0)*TRAY+(+$('lo').value||0);$('tot').innerHTML=t('کل انڈے','Total eggs')+': '+n+'<br><span style="font-weight:400">'+ef(n)+($('pp')&&+$('pp').value?' · '+t('کل رقم','Amount')+' '+Rs(n*(+$('pp').value)/PETI):'')+'</span>';return n}
 function addE(k){
  const x=f=>`<label>${f[1]}</label><input id="${f[0]}" ${f[2]||''}>`,nm='type="number" inputmode="numeric" min="0"';
  let f='';
@@ -171,7 +171,7 @@ function addE(k){
  else if(k=='expense')f=x(['n',t('رقم (Rs)','Amount (Rs)'),nm])+x(['t',t('کس چیز کا خرچہ؟ (دوا، بجلی، مزدوری)','What for? (medicine, power, labour)')]);
  else if(k=='pay')f=x(['buyer',t('خریدار کا نام','Buyer name')])+x(['n',t('وصول رقم','Amount received'),nm]);
  else f=x(['n',t('تعداد','Quantity'),nm]);
- if(k=='egg_out')f+=x(['p',t('فی انڈا ریٹ (Rs)','Rate per egg (Rs)'),nm+' step="0.1"'])+x(['buyer',t('خریدار کا نام','Buyer name')])+x(['pd',t('ابھی ادا کی گئی رقم','Paid now (Rs)'),nm]);
+ if(k=='egg_out')f+=x(['pp',t('ریٹ فی پیٹی (Rs)','Rate per crate (Rs)'),'type="number" inputmode="decimal" min="0" step="any" oninput="eggCalc()"'])+x(['buyer',t('خریدار کا نام','Buyer name')])+x(['pd',t('ابھی ادا کی گئی رقم','Paid now (Rs)'),nm]);
  if(k=='feed_in')f+=x(['c',t('کل قیمت (Rs)','Total cost (Rs)'),nm]);
  if(k=='dead')f+=x(['t',t('وجہ (بیماری، گرمی…)','Reason (disease, heat…)')]);
  else if(!['expense','pay'].includes(k))f+=x(['t',t('نوٹ (اختیاری)','Note (optional)')]);
@@ -183,7 +183,7 @@ function saveE(k){
  const g=i=>$(i)?$(i).value.trim():'',n=EGG(k)?eggCalc():+g('n');
  if(!(n>0))return alert(t('درست مقدار لکھیں','Enter a valid quantity'));
  const o={k,n,d:g('d')||td()};['t','buyer','sh'].forEach(i=>{if(g(i))o[i=='sh'?'shed':i]=g(i)});
- ['p','pd','c'].forEach(i=>{if(g(i))o[i]=+g(i)});
+ ['pd','c'].forEach(i=>{if(g(i))o[i]=+g(i)});if(g('pp')){o.pp=+g('pp');o.p=o.pp/PETI}
  if(k=='pay'&&!o.buyer)return alert(t('خریدار کا نام لکھیں','Enter buyer name'));
  put('entries',o);cs();
 }
@@ -220,7 +220,7 @@ function rep(){
  return `<div class="np" style="margin:8px 0"><button class="s" onclick="try{window.print()}catch(e){}">🖨️ ${t('پرنٹ','Print')}</button> <button class="s" onclick="backup()">💾 ${t('بیک اپ','Backup')}</button></div>
  <h2>${t('روزانہ رپورٹ','Daily report')}</h2><div class="card sc"><table><tr><th>${t('تاریخ','Date')}</th><th>${t('انڈے آئے','Eggs in')}</th><th>${t('فروخت','Sold')}</th><th>${t('اسٹاک (پیٹی)','Stock (crates)')}</th><th>${t('خوراک','Feed')}</th><th>${t('اموات','Deaths')}</th><th>${t('مرغیاں','Hens')}</th><th>${t('منافع','Profit')}</th></tr>
  ${D.map(d=>`<tr><td>${d.slice(5)}</td><td>${sum('egg_in',d)}</td><td>${sum('egg_out',d)}</td><td><b>${cr(eggs(d))}</b></td><td>${sum('feed_out',d)}</td><td style="color:var(--red)">${sum('dead',d)}</td><td>${hens(d)}</td><td>${Math.round(inc(d)-cost(d))}</td></tr>`).join('')}</table></div>
- <h2 class="np">${t('تمام انٹریاں','All entries')}</h2><div class="np">${F().slice().sort((a,b)=>b.d.localeCompare(a.d)||b.id.localeCompare(a.id)).slice(0,60).map(e=>`<div class="card row"><div><b>${kd(e.k)}: ${EGG(e.k)?ef(e.n)+' ('+e.n+')':e.n}</b>${e.p?` × Rs ${e.p}`:''}<div class="mut">${e.d}${e.shed?' · '+esc(e.shed):''}${e.buyer?' · '+esc(e.buyer):''}${e.t?' · '+esc(e.t):''}</div></div><button class="r" onclick="if(confirm('${t('حذف کریں؟','Delete?')}'))rm('entries','${e.id}')">✕</button></div>`).join('')||`<div class="card mut">${t('ابھی کوئی انٹری نہیں','No entries yet')}</div>`}</div>`;
+ <h2 class="np">${t('تمام انٹریاں','All entries')}</h2><div class="np">${F().slice().sort((a,b)=>b.d.localeCompare(a.d)||b.id.localeCompare(a.id)).slice(0,60).map(e=>`<div class="card row"><div><b>${kd(e.k)}: ${EGG(e.k)?ef(e.n)+' ('+e.n+')':e.n}</b>${e.p?` · Rs ${e.pp||Math.round(e.p*PETI*100)/100} ${t('فی پیٹی','per crate')}`:''}<div class="mut">${e.d}${e.shed?' · '+esc(e.shed):''}${e.buyer?' · '+esc(e.buyer):''}${e.t?' · '+esc(e.t):''}</div></div><button class="r" onclick="if(confirm('${t('حذف کریں؟','Delete?')}'))rm('entries','${e.id}')">✕</button></div>`).join('')||`<div class="card mut">${t('ابھی کوئی انٹری نہیں','No entries yet')}</div>`}</div>`;
 }
 init();
 </script></body></html>
