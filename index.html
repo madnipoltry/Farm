@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="ur" dir="rtl"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>مدنی پولٹری فارم · Madni Poultry Farm</title>
+<style>body{margin:0;padding:48px 16px;background:#f5ecdc;color:#3b2a22;font-family:Tahoma,system-ui,sans-serif;text-align:center}</style>
+</head><body>
+<div id="msg">لوڈ ہو رہا ہے… Loading…</div>
+
+<!-- Colours: Beige & Terracotta (always light) -->
+<script type="text/plain" id="theme">
+:root,:root:not([data-theme="light"]),:root[data-theme="dark"]{color-scheme:light;--bg:#f5ecdc;--card:#fffaf1;--tx:#3b2a22;--mut:#7d6a5c;--pri:#a9461f;--pri2:#f4dfd0;--amb:#8a5a12;--amb2:#f7e8c8;--red:#a3271f;--red2:#f9dcd5;--bd:#e3d3ba}
+</script>
+
+<!-- Edit feature: adds a pencil button next to delete in the Report entries list -->
+<script type="text/plain" id="patch">
+var EDITING=null;
+var _addE=addE,_put=put,_rep=rep;
+addE=function(k){EDITING=null;_addE(k)};
+put=function(col,o){if(EDITING&&col=='entries'){o.id=EDITING;EDITING=null}return _put(col,o)};
+rep=function(){
+ return _rep().replace(/<button class="r" onclick="if\(confirm\('[^']*'\)\)rm\('entries','([^']+)'\)">/g,function(m,id){
+  return '<button class="s" onclick="editE(\''+id+'\')">✎</button>'+m;
+ });
+};
+function editE(id){
+ var e=E.find(function(x){return x.id==id});if(!e)return;
+ if(!can('edit'))return alert(t('اجازت نہیں','Not allowed'));
+ _addE(e.k);
+ if(EGG(e.k)){
+  $('pt').value=Math.floor(e.n/PETI)||'';
+  $('tr').value=Math.floor((e.n%PETI)/TRAY)||'';
+  $('lo').value=(e.n%TRAY)||'';
+  eggCalc();
+ }else if($('n'))$('n').value=e.n;
+ ['p','pd','c','t','buyer'].forEach(function(i){if($(i)&&e[i]!=null)$(i).value=e[i]});
+ if($('d'))$('d').value=e.d;
+ if($('sh'))$('sh').value=e.shed||'';
+ EDITING=id;
+}
+</script>
+
+<script>
+fetch('madni-poultry-farm.html',{cache:'no-cache'})
+ .then(function(r){if(!r.ok)throw new Error('http '+r.status);return r.text()})
+ .then(function(h){
+  var css=document.getElementById('theme').textContent,js=document.getElementById('patch').textContent;
+  h=h.replace('</head>','<style>'+css+'</style></head>').replace('</body>','<script>'+js+'<\/script></body>');
+  document.open();document.write(h);document.close();
+ })
+ .catch(function(e){document.getElementById('msg').textContent='لوڈ نہیں ہو سکا / Could not load: '+e.message});
+</script>
+</body></html>
